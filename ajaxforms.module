@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @file
+ * Creating ajax form and hundler fuction. 
+ */
+
+function ajaxforms_menu() { 
+  $items['ajaxforms'] = array(
+    'title' => 'Ajax Form ',
+    'description' => 'Ajax form example',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ajaxforms_basic'),
+    'access callback' => TRUE,
+  );
+
+	return $items;
+}
+
+/**
+ * Build form for callback ajaxforms
+ */
+
+function ajaxforms_basic($form, &$form_state) {
+  $form = array();
+
+  $form['username'] = array(
+    '#title' => t('Username'),
+    '#type' => 'textfield',
+    '#ajax' => array(
+       'callback' => 'ajaxforms_basic_callback',
+       'wrapper' => 'ajaxforms-basic-wrapper',
+    	),
+  	);
+
+  $form['password'] = array(
+    '#title' => t('Password'),
+    '#type' => 'textfield',
+  	);
+
+if (isset($form_state['values']['username']) && $form_state['values']['username'] != '') {
+	$form['password']['#description'] = 'Hi <strong>' . $form_state['values']['username'] . '</strong>! Please give your password.';
+}
+
+  $form['password']['#prefix'] = '<div id="ajaxforms-basic-wrapper">';
+  $form['password']['#suffix'] = '</div>';
+
+  $form['submit'] = array(
+    '#value' => t('Login'),
+    '#type' => 'submit',
+  	);
+  return $form;
+}
+
+function ajaxforms_basic_callback($form, &$form_state) {
+   return $form['password'];
+} 
